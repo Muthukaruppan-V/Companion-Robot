@@ -1,7 +1,6 @@
 # Companion-Robot
-===============
 
-This is a smart and interactive Companion Robot designed to assist humans, especially the elderly and children, by recognizing emotions and responding in real time using natural language. The system integrates facial emotion recognition, voice-based conversation via OpenAI's ChatGPT API, and touch-based interaction using embedded hardware.
+This is a smart and interactive Companion Robot designed to assist humans, especially the elderly and children, by recognizing emotions and responding in real time using natural language. The system integrates facial emotion recognition, voice-based conversation via OpenAI's ChatGPT API, and touch-based interaction using embedded hardware on a Raspberry Pi 4B.
 
 Features
 --------
@@ -26,49 +25,54 @@ Core Technologies
 
 Category               | Technologies Used
 ----------------------|-------------------------------
-Emotion Detection      | DCNN model trained on FER-2013 dataset
-Voice Input/Output     | SpeechRecognition, pyttsx3 or gTTS
-Language Model         | OpenAI ChatGPT API
-Microcontroller        | ESP32 with Arduino-compatible components
-Embedded Components    | Servo motors, capacitive touch sensor, OLED display
-Programming Stack      | Python, C++ (Arduino), OpenCV, TensorFlow/Keras
+Emotion Detection      | DCNN model trained on FER-2013 dataset  
+Voice Input/Output     | SpeechRecognition, pyttsx3 or gTTS  
+Language Model         | OpenAI ChatGPT API  
+Microcontroller Board  | Raspberry Pi 4B  
+Embedded Components    | Servo motors, capacitive touch sensor, OLED display  
+Programming Stack      | Python, OpenCV, TensorFlow/Keras, I2C, GPIO, Linux  
 
 Installation and Setup
 ----------------------
 
-Python Backend (PC)
--------------------
+Raspberry Pi Backend
+--------------------
 
-1. Clone the Repository
+1. Update and upgrade the Raspberry Pi OS
 
-   git clone <your-repo-url>
+   sudo apt update  
+   sudo apt upgrade
+
+2. Clone the Repository
+
+   git clone <your-repo-url>  
    cd companion-robot
 
-2. Create a virtual environment and install dependencies
+3. Create a virtual environment and install dependencies
 
-   python -m venv venv  
+   python3 -m venv venv  
    source venv/bin/activate  
    pip install -r requirements.txt
 
-3. Add your OpenAI API Key
+4. Add your OpenAI API Key
 
-   Create a file named .env and add the following line:
+   Create a file named `.env` and add the following line:
 
    OPENAI_API_KEY=your_openai_api_key_here
 
-4. Run the Application
+5. Run the Application
 
-   python main.py
+   python3 main.py
 
-Embedded (ESP32 Setup)
-----------------------
+Hardware Setup
+--------------
 
-- Use Arduino IDE to upload the firmware from the embedded folder.
-- Connect:
-  - Touch Sensor to appropriate GPIO pin
-  - Servo Motor(s) to GPIO pins
-  - OLED Display to I2C pins (SCL and SDA)
-- Ensure serial communication between ESP32 and Python backend is active.
+- Connect the components to Raspberry Pi GPIO as follows:
+  - Touch Sensor to appropriate GPIO pin (e.g., GPIO 17)
+  - Servo Motor(s) to GPIO PWM-capable pins (e.g., GPIO 18)
+  - OLED Display via I2C (typically SDA to GPIO 2, SCL to GPIO 3)
+  - USB Camera or Pi Camera for emotion detection input
+  - Microphone and speaker or USB audio interface for voice I/O
 
 Project Structure
 -----------------
@@ -78,8 +82,8 @@ companion-robot/
 ├── main.py                   - Central script for emotion and voice control  
 ├── emotion_model/            - Trained DCNN model and helper functions  
 ├── speech_interface/         - Voice recognition and TTS modules  
-├── embedded/                 - Arduino code for ESP32  
-├── utils/                    - Utility scripts (touch input, camera interface)  
+├── hardware_control/         - Scripts for GPIO, servo, touch, and display  
+├── utils/                    - Utility functions (e.g., camera interface)  
 ├── requirements.txt          - Python dependencies  
 └── .env                      - API key configuration (not included in repo)
 
@@ -88,27 +92,27 @@ Functional Modules
 
 1. Emotion Detection
 
-- Uses a DCNN model trained on FER-2013
-- Processes live video from a camera using OpenCV
-- Maps detected emotion to both speech and gestures
+- Uses a DCNN model trained on FER-2013  
+- Processes live video feed using OpenCV on Raspberry Pi  
+- Maps detected emotion to speech output and servo gestures
 
 2. Conversational AI
 
-- Converts voice input to text
-- Sends the query to ChatGPT API
-- Converts text reply to speech for voice response
+- Captures and converts voice input to text  
+- Sends the text query to ChatGPT API  
+- Converts text response to speech using TTS engine
 
 3. Embedded Interactions
 
-- Servo motors execute gestures based on emotions or voice intent
-- Touch sensor activates or deactivates interaction state
-- OLED screen shows emoticons or messages based on context
+- Servo motors express physical gestures like nodding  
+- Touch sensor triggers conversational mode or reactions  
+- OLED screen provides visual feedback with emotion-related icons or text
 
 Future Enhancements
 -------------------
 
-- Multimodal Emotion Detection using facial, voice, and posture data  
-- On-Device Inference using TensorFlow Lite on edge devices  
-- Context-Aware Conversations with memory of previous interactions  
-- Emotionally Modulated Speech through advanced voice synthesis  
-- Multi-language Support for regional and global users  
+- Multimodal Emotion Detection using facial expressions, voice tone, and posture  
+- On-Device Inference using TensorFlow Lite for faster real-time performance  
+- Context-Aware Conversations with memory for personalized interaction  
+- Emotionally Modulated Speech with expressive TTS  
+- Multi-language Support to expand usability across cultures
